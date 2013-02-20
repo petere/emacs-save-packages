@@ -69,11 +69,13 @@ by default), and offer to install the missing packages."
   (with-temp-buffer
     (insert-file-contents (or filename save-packages-file))
     (let* ((saved-package-list (car (read-from-string (buffer-string))))
-           (missing-package-list (remove-if 'package-installed-p saved-package-list)))
-      (map-y-or-n-p "Install package \"%s\"? "
-                    'package-install
-                    missing-package-list
-                    '("package" "packages" "install")))))
+           (missing-package-list (remove-if 'package-installed-p saved-package-list))
+           (packages-to-install-list (remove-if-not (lambda (pkg)
+                                                      (y-or-n-p (format "Install package \"%s\"? " pkg)))
+                                                    missing-package-list)))
+      (if packages-to-install-list
+          (mapc 'package-install packages-to-install-list)
+        (message "Everything is up to date.")))))
 
 (provide 'save-packages)
 
