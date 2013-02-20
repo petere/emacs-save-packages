@@ -55,7 +55,8 @@ The list is written to FILENAME, or `save-packages-file' by default."
   (interactive (let ((insert-default-directory nil))
                  (list (read-file-name "Save package list to file: " nil nil nil save-packages-file))))
   (with-temp-buffer
-    (insert (format "%s" (mapcar 'car package-alist)))
+    (pp (sort (copy-sequence (mapcar 'car package-alist)) 'string<)
+        (current-buffer))
     (write-region (point-min) (point-max) (or filename save-packages-file))))
 
 ;;;###autoload
